@@ -11,9 +11,7 @@
             <link href="">
 
         <!-- ==== CSS ==== -->
-            <!-- href is a filepath to the stylesheet (probably css/style.css) one link tag needed per css file-->
             <link rel="stylesheet" href="">
-
             <!-- Styling here, if not using independent css file(s) -->
             <style>
 
@@ -22,19 +20,101 @@
 
     <body>
         <!-- ======= CONTENT ========= -- >
-            <div> <!-- framing div that holds chart, so you can move the whole chart and any titles or text around as one block -->
+            <div> <!-- framing div that holds chart, titles and text so you can move the whole chart and any titles or text around as one block -->
                 <div id='chart_name'>
                 </div>
             </div>
-        
+
         <!-- ======= SCRIPTS ========= -->
             <script src="js/d3.v3.min.js"></script>
-            <!-- other scripts go here (like fancy charts, tooltip, zoom scripts, etc) -->
+            <!-- other scripts go here (like fancy charts, tooltip, zoom.js, etc) -->
 
             <!-- placeholder for a D3 inline script -->
             <script type="text/javascript"> 
                 /* D3 code goes in here */
             </script>
+
+            <!-- ========== EXAMPLE D3 SNIPPETS ========= -->
+
+            <!-- Legend, Tooltip and Dynamic zoom axes examples
+            <script type="text/javascript">
+                // LEGEND: 
+                // check out example via: http://d3-legend.susielu.com/#color-ordinal
+
+                //Tooltip!
+                var tip = d3.tip()
+                    .attr('class', 'd3-tip')
+                    .html(function(d){
+                          return "Field 1 description:<br /><b>"+ d.DATAFEATURE_1+"</b><br />Field 2 (monetary) description: <em>$" + comma(d3.round(d.MONETARY_FIELD,0)) + "</em><br /> Field 3 (percentage) description: <em>"+ percent(d.PRCT_to_Charity) + "</em>";
+                      });
+                svg.call(tip);
+                //End tooltip!
+
+                // ZOOM IN AND OUT FUNCTIONS TO GENERATE DYNAMIC AXES ON ZOOM!
+                //cobbled together via http://bl.ocks.org/d3noob/7030f35b72de721622b8
+                    function ZoomIn(){
+                      //this relies on you setting an xmax and ymax in the auto-loaded plot
+                      xmax = xmax/2;
+                      ymax = ymax/2;
+                      d3.csv("data/example.csv", function(error, data) {
+                          x.domain([0, xmax])
+                          y.domain([0, ymax])
+                          //this animates the axis change
+                          container.select(".x.axis").transition()
+                                .duration(750)
+                                .call(xAxis);
+                          container.select(".y.axis").transition()
+                                .duration(750)
+                                .call(yAxis);
+                          // clears and redraws all points on scatterplot at time of zoom
+                          container.selectAll(".dot").remove();
+                          container.selectAll(".dot")
+                            .data(data)
+                          .enter().append("circle")
+                            .attr("class", "dot")
+                            .attr("r", 5)
+                            .attr("cx", function(d) { return x(d.FIELD1_XAXIS); })
+                            .attr("cy", function(d) { return y(d.FIELD2_YAXIS); })
+                            // syntatic sugar if-then statement to set color based on data
+                            .style("fill", function(d) { return (d.FIELD3_NUMERIC) >= 0.50 ? "#0000FF" : "#FF0000" ;})
+                            // show tooltip, if you have one.
+                            .on('mouseover', tip.show)
+                            .on('mouseout', tip.hide);
+                      });
+                    }
+                    function ZoomOut(){
+                      xmax = xmax*2;
+                      ymax = ymax*2;
+                      d3.csv("data/example.csv", function(error, data) {
+                          x.domain([0, xmax])
+                          y.domain([0, ymax])
+                          //this animates the axis change
+                          container.select(".x.axis").transition()
+                                .duration(750)
+                                .call(xAxis);
+                          container.select(".y.axis").transition()
+                                .duration(750)
+                                .call(yAxis);
+                          // clears and redraws all points on scatterplot at time of zoom
+                          container.selectAll(".dot").remove();
+                          container.selectAll(".dot")
+                            .data(data)
+                          .enter().append("circle")
+                            .attr("class", "dot")
+                            .attr("r", 5)
+                            .attr("cx", function(d) { return x(d.FIELD1_XAXIS); })
+                            .attr("cy", function(d) { return y(d.FIELD2_YAXIS); })
+                            // syntatic sugar if-then statement to set color based on data
+                            .style("fill", function(d) { return (d.FIELD3_NUMERIC) >= 0.51 ? "#0000FF" : "#FF0000" ;})
+                            // show tooltip, if you have one.
+                            .on('mouseover', tip.show)
+                            .on('mouseout', tip.hide);
+                      });
+                    }
+                // END ZOOMS
+            </script>
+            -->
+
     </body>
 
 </html>
